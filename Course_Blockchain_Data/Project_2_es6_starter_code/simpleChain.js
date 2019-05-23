@@ -51,7 +51,7 @@ myBlockChain.getBlock(0).then((block) => {
  ***************** Validate Block  *************
  ***********************************************/
 
-/*
+
 // Be careful this only will work if `validateBlock` method in Blockchain.js file return a Promise
 myBlockChain.validateBlock(0).then((valid) => {
 	console.log(valid);
@@ -59,10 +59,8 @@ myBlockChain.validateBlock(0).then((valid) => {
 .catch((error) => {
 	console.log(error);
 })
-*/
 
 /** Tampering a Block this is only for the purpose of testing the validation methods */
-/*
 myBlockChain.getBlock(5).then((block) => {
 	let blockAux = block;
 	blockAux.body = "Tampered Block";
@@ -96,7 +94,6 @@ myBlockChain.getBlock(6).then((block) => {
  ***************** Validate Chain  *************
  ***********************************************/
 
-/*
 // Be careful this only will work if `validateChain` method in Blockchain.js file return a Promise
 myBlockChain.validateChain().then((errorLog) => {
 	if(errorLog.length > 0){
@@ -111,4 +108,3 @@ myBlockChain.validateChain().then((errorLog) => {
 .catch((error) => {
 	console.log(error);
 })
-*/
