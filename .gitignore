@@ -1,0 +1,5 @@
+# Ignore DB
+chaindata
+
+# Ignore Node
+node_modules
