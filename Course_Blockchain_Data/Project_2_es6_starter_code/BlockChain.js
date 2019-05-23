@@ -9,8 +9,13 @@ const Block = require('./Block.js');
 class Blockchain {
 
     constructor() {
-        this.bd = new LevelSandbox.LevelSandbox();
-        this.generateGenesisBlock();
+      let self = this;
+      self.db = new LevelSandbox.LevelSandbox();
+      self.db.getBlocksCount().then((height) => {
+        if(height == -1) {
+          self.addBlock(self.generateGenesisBlock());
+        }
+      })
     }
 
     // Helper method to create a Genesis Block (always with height= 0)
@@ -18,22 +23,33 @@ class Blockchain {
     // you will need to set this up statically or instead you can verify if the height !== 0 then you
     // will not create the genesis block
     generateGenesisBlock(){
-        // Add your code here
+        return new Block.Block("First block in the chain - Genesis block");
     }
 
     // Get block height, it is a helper method that return the height of the blockchain
     getBlockHeight() {
-        // Add your code here
+        return this.db.getBlocksCount();
     }
 
     // Add new block
     addBlock(block) {
-        // Add your code here
+        let self = this;
+        return self.db.getBlocksCount().then((height) => {
+          block.height = height + 1;
+          if(block.height > 0) {
+            self.getBlock(height).then((prev) => {
+              block.previousHash = prev.hash;  
+            });
+          }
+          block.hash = SHA256(JSON.stringify(block)).toString();
+          return self.db.addLevelDBData(block.height, JSON.stringify(block));
+        });
     }
 
     // Get Block By Height
     getBlock(height) {
-        // Add your code here
+      let self = this;
+      return self.db.getLevelDBData(height).then(block => JSON.parse(block))
     }
 
     // Validate if Block is being tampered by Block Height
@@ -56,7 +72,7 @@ class Blockchain {
             }).catch((err) => { console.log(err); reject(err)});
         });
     }
-   
+
 }
 
 module.exports.Blockchain = Blockchain;

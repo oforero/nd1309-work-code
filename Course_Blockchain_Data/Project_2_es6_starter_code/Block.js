@@ -4,8 +4,11 @@
 
 class Block {
 	constructor(data){
-		// Add your Block properties
-		// Example: this.hash = "";
+		this.height = '';
+    this.timeStamp = '';
+    this.data = data;
+    this.previousHash = '0x';
+    this.hash = '';
 	}
 }
 
