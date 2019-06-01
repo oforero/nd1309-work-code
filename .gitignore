@@ -3,3 +3,7 @@ chaindata
 
 # Ignore Node
 node_modules
+
+# Ignore OS and Archive files
+.DS_Store
+*.zip
