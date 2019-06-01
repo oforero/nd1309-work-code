@@ -1,14 +1,13 @@
-const SHA256 = require('crypto-js/sha256');
-const BlockClass = require('./Block.js');
+const BlockChain = require('./BlockChain.js');
+const Block = require('./Block.js');
 
 /**
  * Controller Definition to encapsulate routes to work with blocks
  */
 class BlockController {
-
-    /**
+   /**
      * Constructor to create a new BlockController, you need to initialize here all your endpoints
-     * @param {*} app 
+     * @param {*} app
      */
     constructor(app) {
         this.app = app;
@@ -22,8 +21,17 @@ class BlockController {
      * Implement a GET Endpoint to retrieve a block by index, url: "/api/block/:index"
      */
     getBlockByIndex() {
-        this.app.get("/api/block/:index", (req, res) => {
-            // Add your code here
+        let self = this;
+        self.app.get("/api/block/:index", (req, res) => {
+            let ix = req.params.index;
+            self.myBlockChain.getBlock(ix)
+              .then((block) => {
+                res.send(block);
+              })
+              .catch((err) => {
+                res.status(404)        // HTTP status 404: NotFound
+                  .send("Error block " + ix + " does not exist in this blockchain ");
+              })
         });
     }
 
@@ -31,8 +39,17 @@ class BlockController {
      * Implement a POST Endpoint to add a new Block, url: "/api/block"
      */
     postNewBlock() {
+        let self = this;
         this.app.post("/api/block", (req, res) => {
-            // Add your code here
+            let blockData = req.body.data;
+            let block = new Block.Block(blockData);
+            self.myBlockChain.addBlock(block)
+              .then((block) => {
+                res.send(block)
+              })
+              .catch((err) => {
+                res.send("Error creating block: " + err);
+              })
         });
     }
 
@@ -40,20 +57,14 @@ class BlockController {
      * Help method to inizialized Mock dataset, adds 10 test blocks to the blocks array
      */
     initializeMockData() {
-        if(this.blocks.length === 0){
-            for (let index = 0; index < 10; index++) {
-                let blockAux = new BlockClass.Block(`Test Data #${index}`);
-                blockAux.height = index;
-                blockAux.hash = SHA256(JSON.stringify(blockAux)).toString();
-                this.blocks.push(blockAux);
-            }
-        }
+        this.myBlockChain = new BlockChain.Blockchain();
+        console.log("initializeMockData")
     }
 
 }
 
 /**
  * Exporting the BlockController class
- * @param {*} app 
+ * @param {*} app
  */
 module.exports = (app) => { return new BlockController(app);}
